@@ -1,23 +1,26 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.Events;
+using Random = UnityEngine.Random;
+
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] int totalWaves; // максимальное число волн
-    [SerializeField] int totalEnemies = 5; // сколько всего должно появится противников на уровне
-    [SerializeField] int waveNumber = 1; // волна с которой начинаем
-    [SerializeField] Enemy[] typesOfEnemies; // массив обьектов врагов
-    [SerializeField] int enemiesPerSpawn; // сколько одновременно может спавниться на уровне
-    [SerializeField] Transform spawnPoint;
-    int totalMoney = 45; // текущее колличесво денег
-    int _totalEscaped = 0; // сколько прошло противников
-    int roundEscaped = 0; // сколько прошло противников за 1 игру
-    int totalKilled = 0; // всего уничтожено врагов (для механики денег, типо как вознаграждать игрока)    int currentTypesOfEnemiesToSpawn = 0; // рандом для врагов
-    int roundKilled = 0;
+    [SerializeField] private int totalWaves; // максимальное число волн
+    [SerializeField] private int totalEnemies = 5; // сколько всего должно появится противников на уровне
+    [SerializeField] private int waveNumber = 1; // волна с которой начинаем
+    [SerializeField] private Enemy[] typesOfEnemies; // массив обьектов врагов
+    [SerializeField] private int enemiesPerSpawn; // сколько одновременно может спавниться на уровне
+    [SerializeField] private Transform spawnPoint;
 
-    int currentTypesOfEnemiesToSpawn = 0;
-    [SerializeField] float spawnDelay = 0.75f;
+    private int _totalEscaped; // сколько прошло противников
+    private int _roundEscaped; // сколько прошло противников за 1 игру
+    private int _totalKilled; // всего уничтожено врагов (для механики денег, типо как вознаграждать игрока)    int currentTypesOfEnemiesToSpawn = 0; // рандом для врагов
+    private int _roundKilled;
+    private int _currentTypesOfEnemiesToSpawn;
 
+    [SerializeField] private float spawnDelay = 0.75f;
+    
     public int TotalEscaped
     {
         get 
@@ -33,36 +36,25 @@ public class GameManager : Singleton<GameManager>
     {
         get
         {
-            return roundEscaped; 
+            return _roundEscaped; 
         }
         set
         {
-            roundEscaped = value;
+            _roundEscaped = value;
         }
     }
     public int TotalKilled 
     {
         get
         {
-            return totalKilled;
+            return _totalKilled;
         }
         set
         {
-            totalKilled = value;
+            _totalKilled = value;
         }
     }
-    public int TotalMoney 
-    {
-        get
-        {
-            return totalMoney;
-        }
-        set
-        {
-            totalMoney = value;
-        }
-    }
-
+    
     public int TotalEnemies
     {
         get => totalEnemies;
@@ -77,24 +69,18 @@ public class GameManager : Singleton<GameManager>
 
     public int RoundKilled
     {
-        get => roundKilled;
-        set => roundKilled = value;
+        get => _roundKilled;
+        set => _roundKilled = value;
     }
     
-    public List<Enemy> EnemyList = new List<Enemy>(); // лист содержащих всей противников на уровне (так же будет считывать по какому стрелять)
+    public List<Enemy> enemyList = new List<Enemy>(); // лист содержащих всей противников на уровне (так же будет считывать по какому стрелять)
 
-    IEnumerator spawningCoroutine;
+    public UnityEvent<int, Enemy> onEnemyDie;
 
-    bool spawning;
-
-    private void Start() 
+    private void Start()
     {
-        spawningCoroutine = Spawn();
-    }
-
-    void Update()
-    {
-
+        onEnemyDie = new UnityEvent<int, Enemy>();
+        onEnemyDie.AddListener(OnEnemyDieHandler);
     }
 
     public void StartNewGame()
@@ -108,17 +94,18 @@ public class GameManager : Singleton<GameManager>
         RoundEscaped = 0;
         TotalEscaped = 0;
         RoundKilled = 0;
-        TotalMoney = 45;
+        MoneyManager.Instance.TotalMoney = 45;
         TotalEnemies = 5;
         WaveNumber = 0;
     }
 
-    IEnumerator Spawn()
+    private IEnumerator Spawn()
     {
         for (int i = 0; i < totalEnemies; i++) // создаем по одному обьекту
         {
-            Enemy newEnemy = Instantiate(typesOfEnemies[Random.Range(0, currentTypesOfEnemiesToSpawn)]) as Enemy; // создаем одного из врагов
+            Enemy newEnemy = Instantiate(typesOfEnemies[Random.Range(0, _currentTypesOfEnemiesToSpawn)]) ; // создаем одного из врагов
             newEnemy.transform.position = spawnPoint.position; // на позиции спавна
+            RegisterEnemy(newEnemy);
             yield return new WaitForSeconds(spawnDelay);
         }
     }
@@ -129,29 +116,8 @@ public class GameManager : Singleton<GameManager>
         totalEnemies += waveNumber; // с каждой волной больше противников
         RoundEscaped = 0;
         RoundKilled = 0;
-        TowerManager.Instance.DeleteAllProjectiles();
+        //TowerManager.Instance.ClearProjectiles();
         StartCoroutine(Spawn());
-    }
-
-    public void RegisterEnemy(Enemy enemy) // по какому (ближайшему) стрелять
-    {
-        EnemyList.Add(enemy); // дабавляет в лист врага
-    }
-
-    public void UnRegisterEnemy(Enemy enemy) // убираем со списка
-    {
-        EnemyList.Remove(enemy); // убирает из листа врага
-        Destroy(enemy.gameObject); // уничтожает врага в листе 
-    }
-
-    public void AddMoney(int amount)
-    {
-        TotalMoney += amount; // добавляем деньги
-    }
-
-    public void SubtractMoney(int amount)
-    {
-        TotalMoney -= amount; // вычитаем деньги
     }
 
     public void IsWaveOver() // закончилась ли волна
@@ -159,23 +125,41 @@ public class GameManager : Singleton<GameManager>
         // если сумма сбежавших противников + всех что мы убили = всем противникам в волне
         if ((RoundEscaped + RoundKilled) == TotalEnemies)
         {
-            if (waveNumber <= typesOfEnemies.Length)
-            {
-                currentTypesOfEnemiesToSpawn = waveNumber;
-            }
             if(IsWin())
             {
-                Manager.Instance.SetCurrentGameState(Manager.GameState.win); // то статус - победа            
+                ClearLevel();
+                Manager.Instance.SetCurrentGameState(GameState.Win); // то статус - победа            
             }
-            else Manager.Instance.SetCurrentGameState(Manager.GameState.nextWave); // выводим текущее состояние игры
+            else
+            {
+                if (waveNumber <= typesOfEnemies.Length)
+                {
+                    _currentTypesOfEnemiesToSpawn = waveNumber;
+                }
+                if(IsFinalWave())
+                {
+                    Manager.Instance.SetCurrentGameState(GameState.NextWave); // выводим текущее состояние игры
+                }
+                else Manager.Instance.SetCurrentGameState(GameState.NextWave); // выводим текущее состояние игры
+            }
         }
+    }
+
+    public bool IsFinalWave()
+    {
+        if (waveNumber == totalWaves - 2)
+        {
+            return true;
+        }
+        return false;
     }
 
     public void IsGameOver()
     {
         if (TotalEscaped >= 10) // если прошедших больше чем наших жизней
         {
-            Manager.Instance.SetCurrentGameState(Manager.GameState.gameover);
+            ClearLevel();
+            Manager.Instance.SetCurrentGameState(GameState.GameOver);
         }
     }
 
@@ -188,37 +172,43 @@ public class GameManager : Singleton<GameManager>
         return false;
     }
 
+    public void RegisterEnemy(Enemy enemy) // по какому (ближайшему) стрелять
+    {
+        enemyList.Add(enemy); // дабавляет в лист врага
+    }
+
+    public void UnRegisterEnemy(Enemy enemy) // убираем со списка
+    {
+        enemyList.Remove(enemy); // убирает из листа врага
+        Destroy(enemy.gameObject); // уничтожает врага в листе 
+    }
+
+    private void ClearLevel()
+    {
+        SetDefaultValues();
+        TowerManager.Instance.DestroyAllTowers(); // уничтожаем все башни
+        DestroyEnemies(); // уничтожаем всех умерших врагов на волне
+    }
+
     public void DestroyEnemies()
     {
-        foreach (Enemy enemy in EnemyList) // перебирает врагов на уровне в листе
+        foreach (Enemy enemy in enemyList) // перебирает врагов на уровне в листе
         {
             if(enemy != null)
             {
                 Destroy(enemy.gameObject); // уничтожает врага
             }
         }
-        EnemyList.Clear(); // Очищает лист и дает возможность для загрузки листа врагов для нового уровня
+        enemyList.Clear(); // Очищает лист и дает возможность для загрузки листа врагов для нового уровня
     }
+
+    private void OnEnemyDieHandler(int rewardAmount, Enemy enemy)
+    {
+        GameManager.Instance.UnRegisterEnemy(enemy);
+        GameManager.Instance.RoundKilled += 1;
+        GameManager.Instance.TotalKilled += 1;
+        MoneyManager.Instance.AddMoney(rewardAmount);
+        GameManager.Instance.IsWaveOver();
+    }
+    
 }
-
-// public void Spawn()
-    // {
-    //     if (enemiesPerSpawn > 0 && EnemyList.Count < totalEnemies) // если могут еще создаваться враги
-    //     {
-    //         Debug.Log("s");
-    //         for (int i = 0; i < enemiesPerSpawn; i++) // создаем по одному обьекту
-    //         {
-    //             if (EnemyList.Count < totalEnemies)
-    //             {
-    //                 Enemy newEnemy = Instantiate(typesOfEnemies[Random.Range(0, currentTypesOfEnemiesToSpawn)]) as Enemy; // создаем одного из врагов
-    //                 newEnemy.transform.position = spawnPoint.position; // на позиции спавна
-    //             }
-    //         }
-    //         Wait();
-    //     }
-    // }
-
-    // IEnumerator Wait()
-    // {
-    //     yield return new WaitForSeconds(spawnDelay);// делаем спавн через "spawnDelay" колл-во секунд
-    // }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6160451109801570354}
   - component: {fileID: 6160451109801570355}
-  - component: {fileID: 6160451109801570364}
+  - component: {fileID: 8785576048914133913}
   m_Layer: 0
   m_Name: ClothesTower
   m_TagString: Tower
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6160451109801570365}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.62, y: -0.25430483, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 77d34030f1dda7c4f8ed954a2dfec58d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e1bb85e3009bc6347b75b1349b260adf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6160451109801570364
+--- !u!114 &8785576048914133913
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,9 +92,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6160451109801570365}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f320b0f15c94ba8439b1c95ee1a1dce6, type: 3}
+  m_Script: {fileID: 11500000, guid: c909664c1bf02124e9d0d3856dd98cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBetweenAttacks: 0.5
+  reloadingTime: 0.5
   attackRadius: 2
-  projectTile: {fileID: 47612669330779209, guid: 2d8bcf3136b10fb4f97ca2dfc2ca1942, type: 3}
+  towerProjectTile: {fileID: 47612669330779209, guid: 2d8bcf3136b10fb4f97ca2dfc2ca1942, type: 3}
+  towerSprites:
+  - {fileID: 21300000, guid: e1bb85e3009bc6347b75b1349b260adf, type: 3}
+  - {fileID: 21300000, guid: ab6e7bc046514194ab7acb906383682d, type: 3}
+  - {fileID: 21300000, guid: 65841fd6c3c59a84abb88acd20720450, type: 3}
+  towerTier: 0
+  price: 15

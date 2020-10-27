@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDamage: 1
   pType: 0
+  speed: 5
 --- !u!61 &8671755139366101644
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -60,7 +61,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.014032841, y: 0.006486684}
+  m_Offset: {x: -0.0023966432, y: 0.013906479}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -71,7 +72,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.05040264, y: 0.4416762}
+  m_Size: {x: 0.4394104, y: 0.051608443}
   m_EdgeRadius: 0
 --- !u!1 &111029966891678773
 GameObject:
@@ -97,13 +98,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 111029966891678773}
-  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: 0.92387956, w: 0.38268343}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 47612669330779211}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 135}
 --- !u!212 &9121587571879247216
 SpriteRenderer:
   m_ObjectHideFlags: 0

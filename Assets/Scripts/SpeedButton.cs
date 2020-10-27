@@ -5,41 +5,41 @@ using UnityEngine.UI;
 
 public class SpeedButton : MonoBehaviour
 {
-    public Image currentSpeed_img;
-    public Sprite speed_x1_img;
-    public Sprite speed_x2_img;
-    public Sprite speed_x3_img;
+    public Image currentSpeedImg;
+    public Sprite speedX1Img;
+    public Sprite speedX2Img;
+    public Sprite speedX3Img;
 
-    float currectSpeed;
-    public float speed_x1 = 1f;
-    public float speed_x2 = 2f;
-    public float speed_x3 = 3f;
+    float _currectSpeed;
+    public float speedX1 = 1f;
+    public float speedX2 = 2f;
+    public float speedX3 = 3f;
 
     void Start()
     {
-        Time.timeScale = speed_x1;
-        currentSpeed_img.sprite = speed_x1_img;
-        currectSpeed = speed_x1;
+        Time.timeScale = speedX1;
+        currentSpeedImg.sprite = speedX1Img;
+        _currectSpeed = speedX1;
     }
     public void SpeedChanger()
     {
-        if (currectSpeed == speed_x1)
+        if (_currectSpeed == speedX1)
         {
-            Time.timeScale = speed_x2;
-            currentSpeed_img.sprite = speed_x2_img;
-            currectSpeed = speed_x2;
+            Time.timeScale = speedX2;
+            currentSpeedImg.sprite = speedX2Img;
+            _currectSpeed = speedX2;
         }
-        else if (currectSpeed == speed_x2)
+        else if (_currectSpeed == speedX2)
         {
-            Time.timeScale = speed_x3;
-            currentSpeed_img.sprite = speed_x3_img;
-            currectSpeed = speed_x3;
+            Time.timeScale = speedX3;
+            currentSpeedImg.sprite = speedX3Img;
+            _currectSpeed = speedX3;
         }
-        else if (currectSpeed == speed_x3)
+        else if (_currectSpeed == speedX3)
         {
-            Time.timeScale = speed_x1;
-            currentSpeed_img.sprite = speed_x1_img;
-            currectSpeed = speed_x1;
+            Time.timeScale = speedX1;
+            currentSpeedImg.sprite = speedX1Img;
+            _currectSpeed = speedX1;
         }
     }
 }

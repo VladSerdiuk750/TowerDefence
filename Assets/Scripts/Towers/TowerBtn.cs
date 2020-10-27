@@ -1,35 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class TowerBtn : MonoBehaviour
+namespace Towers
 {
-    [SerializeField]
-    TowerControl towerObject; // место для башни
-    [SerializeField]
-    Sprite dragSprite; // картинка башни выбранной кнопки
-    [SerializeField]
-    int towerPrice; // цена башни
+    public class TowerBtn : MonoBehaviour
+    {
+        [SerializeField]
+        TowerControl towerObject; // место для башни
+        [SerializeField]
+        Sprite dragSprite; // картинка башни выбранной кнопки
+        [SerializeField]
+        int towerPrice; // цена башни
 
-    public TowerControl TowerObject
-    {
-        get
+        public TowerControl TowerObject
         {
-            return towerObject;
+            get
+            {
+                return towerObject;
+            }
         }
-    }
-    public Sprite DragSprite
-    {
-        get
+        public Sprite DragSprite
         {
-            return dragSprite;
+            get
+            {
+                return dragSprite;
+            }
         }
-    }
-    public int TowerPrice
-    {
-        get
+        public int TowerPrice
         {
-            return towerPrice; // возвращаем стоимость башни
+            get
+            {
+                return towerPrice; // возвращаем стоимость башни
+            }
         }
     }
 }

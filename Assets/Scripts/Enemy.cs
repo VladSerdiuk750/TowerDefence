@@ -1,122 +1,97 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField]
-    Transform exit; // точка выхода
-    [SerializeField]
-    Transform[] wayPoints; // массив пути (MovingPoint) по которым идет враг
-    [SerializeField]
-    float navigation; // для просчитывания передвижения нашего персонажа
-    [SerializeField]
-    int health; // жизни врага
-    [SerializeField]
-    int rewardAmount; // награда за убийтсво противника
+    [SerializeField] private float speed = 10f;
 
-    int target = 0; // сколько целей (MovingPoint) прошел противник
-    Transform enemy; // текущее положение врага
-    Collider2D enemyCollider; // коллайдер врага
+    [SerializeField] private Transform exitPoint; //point of exit
 
-    Animator anim; // переменная для анимации
+    [SerializeField] private int health;
+    
+    [SerializeField] private int rewardAmount;
 
-    float navigationTime = 0; // обновляем положение врага в пространстве 
+    private Transform _target; //target way point
 
-    bool isDead = false; // враг умер - не умер (изначально жив)
+    private int _wayPointsIndex = 0; //current way point index
+    
+    private Collider2D _enemyCollider;
 
-    public bool IsDead // свойство
+    private Animator _animator;
+
+    private bool _isDead = false;
+
+    public bool IsDead => _isDead; // is Enemy dead
+    
+    private void Awake()
     {
-        get 
+        _enemyCollider = GetComponent<Collider2D>();
+        _animator = GetComponent<Animator>();
+        if (MovingPoints.Points.Length != 0)
         {
-            return isDead; // возвращаем свойство "isDead"
+            _target = MovingPoints.Points[0];
         }
     }
-    void Start()
+
+    private void FixedUpdate()
     {
-        enemy = GetComponent<Transform>(); // чтобы могли считывать положения врага
-        enemyCollider = GetComponent<Collider2D>(); // реализуем
-        anim = GetComponent<Animator>(); // реализуем
-        GameManager.Instance.RegisterEnemy(this); // указываем на регистрацию противников в этом скрипте     
+        if (_isDead) return;
+        MoveEnemy();
     }
 
-    void Update()
+    private void MoveEnemy()
     {
-        if (wayPoints != null && isDead == false) // если еще есть точки по которым можно идти и противник жив
-        {
-            navigationTime += Time.deltaTime; // продолжаем двигатся к следующей точке
-
-            if (navigationTime > navigation)
-            {
-                if (target < wayPoints.Length) // если не дошли до конца
-                {
-                    
-                    // двигаемся к следующей точке
-                    enemy.position = Vector2.MoveTowards(enemy.position, wayPoints[target].position, navigationTime);
-                }
-                else // если закончились точки пути
-                {
-                    // двигаемя к выходу
-                    enemy.position = Vector2.MoveTowards(enemy.position, exit.position, navigationTime);
-                }
-
-                navigationTime = 0;
-            }
-        }
+        var direction = _target.position - transform.position;
+        transform.Translate(direction.normalized * (speed * Time.deltaTime), Space.World);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "MovingPoint")
+        if (collision.CompareTag("MovingPoint"))
         {
-            target += 1; // засчитали пройденый "MovingPoint"
+            _wayPointsIndex += 1;
+            _target = _wayPointsIndex < MovingPoints.Points.Length ? 
+                MovingPoints.Points[_wayPointsIndex] : exitPoint;
         }
-        else if (collision.tag == "Finish")
+        else if (collision.CompareTag("Finish"))
         {
-            GameManager.Instance.RoundEscaped += 1; // добавляем в getter инфу что противник прошел
-            GameManager.Instance.TotalEscaped += 1; // и что всего сбежавших так же +1
-            GameManager.Instance.UnRegisterEnemy(this); // снимает регистрацию с противников
-            GameManager.Instance.IsWaveOver(); // волна может так же закончится 
+            GameManager.Instance.RoundEscaped += 1;
+            GameManager.Instance.TotalEscaped += 1;
+            GameManager.Instance.UnRegisterEnemy(this);
+            GameManager.Instance.IsWaveOver();
             GameManager.Instance.IsGameOver();
         }
-        else if (collision.tag == "ProjectTile") // при соприкосновении со снарядом
+        else if (collision.CompareTag("ProjectTile"))
         {
-            ProjectTile newP = collision.gameObject.GetComponent<ProjectTile>();
-            EnemyHit(newP.AttackDamage); // наносим урон противнику 
-            Destroy(collision.gameObject); // уничтожать снаряд
+            var newP = collision.gameObject.GetComponent<ProjectTile>();
+            EnemyHit(newP.AttackDamage);
         }
     }
-    public void EnemyHit(int hitPoints)
+
+    private void EnemyHit(int hitPoints)
     {
-        if (health - hitPoints > 0) // если еще есть жизни
+        if (health - hitPoints > 0)
         {
-            health -= hitPoints; // отнимает от жизней врага - урон башни
-            //Manager.Instance.AudioSource.PlayOneShot(SoundManager.Instance.Hit); // звук нанисения урона 
-            //anim.Play("Hurt"); // проигрываем анимацию получения урона
+            health -= hitPoints;
         }
         else
         {
-            // DIE
-            anim.SetTrigger("didDie"); // должен сработать триггер
-
-            Invoke("HideDeadEnemy", 1.5f); // скрывает врага после смерти через (2.5 сек) 
-
+            _animator.SetTrigger("didDie");
             Die();
         }
     }
-    public void Die()
+
+    private void Die()
     {
-        isDead = true; // умер
-        enemyCollider.enabled = false; // выключаем коллайдер врага 
-        GameManager.Instance.TotalKilled += 1; // записываем что один враг умер (например для прописания награды)
-        GameManager.Instance.RoundKilled += 1;
-        //Manager.Instance.AudioSource.PlayOneShot(SoundManager.Instance.Death); // звук смерти
-        GameManager.Instance.AddMoney(rewardAmount); // при смерти врага добавляем денег
-        GameManager.Instance.IsWaveOver(); // волна может так же закончится
+        _isDead = true;
+        HideDeadEnemy(1.0f);
+        
+        _enemyCollider.enabled = false;
+
+        GameManager.Instance.onEnemyDie.Invoke(rewardAmount, this);
     }
-    public void HideDeadEnemy()
+
+    private void HideDeadEnemy(float time)
     {
-        enemy.gameObject.SetActive(false); // скрывает врага после смерти
-        Destroy(enemy.gameObject);
+        Destroy(gameObject, time);
     }
 }

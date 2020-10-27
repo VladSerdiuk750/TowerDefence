@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 754253347711642018}
   m_Layer: 0
   m_Name: Coin_5
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -154,22 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8148a6bdf1544434aad39ee27376fce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exit: {fileID: 8725873038274194585, guid: 0fbe1e2340eac78459eb81dc207e5dbc, type: 3}
-  wayPoints:
-  - {fileID: 6971425505984614086, guid: b21a7306ca826db48bf8491e04fcbf8f, type: 3}
-  - {fileID: 1610440248566318445, guid: 6d556f5935a655e4695a2b6b3a9f1d19, type: 3}
-  - {fileID: 6037957009636908304, guid: c8eb96a0ea1423a4b831b144091df2b4, type: 3}
-  - {fileID: 6482889038166464132, guid: a1b53a3f26d9b044a8ce78899e03dfc0, type: 3}
-  - {fileID: 3522436147910175486, guid: ac76d5970a3787d42874c2c4edf72ef5, type: 3}
-  - {fileID: 6727288784321724306, guid: a9533cbdbc5f05f41a651572a42cb3d2, type: 3}
-  - {fileID: 5913562264052553990, guid: 6200c122c0a95364792cc67f9c1183a8, type: 3}
-  - {fileID: 7746254388833690285, guid: c4de3f0c70827db4aa647e9c71276944, type: 3}
-  - {fileID: 5710790730637408381, guid: 6e7f3b33b94b01c448fa75f44b09efc9, type: 3}
-  - {fileID: 3977179528617559667, guid: 95b8df851d42b8b4db1cf850af884585, type: 3}
-  - {fileID: 7988599855343204461, guid: 5988d953a53987d489874f4c415301a8, type: 3}
-  - {fileID: 4228847752780041305, guid: 139226b10a93d2741b23ceb20bf990db, type: 3}
-  - {fileID: 3827977295004800812, guid: 6d16dbaf0444dd24c9cfa54eaac6bfd7, type: 3}
-  - {fileID: 8875708149646277201, guid: b9396e8699794274bb4cf2b87276ecb7, type: 3}
-  navigation: 0.01
+  speed: 1
+  exitPoint: {fileID: 6757379593893812662, guid: e0f70e15d2ce9a64193998c312e3caa7, type: 3}
   health: 5
   rewardAmount: 5
