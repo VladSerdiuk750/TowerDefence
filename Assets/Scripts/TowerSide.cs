@@ -23,7 +23,7 @@ public class TowerSide : MonoBehaviour
 
     private void OnMouseDown() 
     {
-        if (Manager.Instance.currentState != GameState.Play)
+        if (Manager.Instance.CurrentState != GameState.Play)
             return;
         if (Time.timeScale == 0.0f)
             return;

@@ -43,14 +43,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d36bcf088eeba9f4394175522ab54818, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalWaves: 10
-  totalEnemies: 5
-  waveNumber: 0
   typesOfEnemies:
   - {fileID: 5161366775026869031, guid: 2e80923bd1ca17542adaaafd6015b006, type: 3}
   - {fileID: 4789699420266890239, guid: c734e96cdd19a0c49b5d5ea9dc44195e, type: 3}
   - {fileID: 754253347711642018, guid: 7efb2ad409f9f39449ef34f43958e6cf, type: 3}
-  enemiesPerSpawn: 1
   spawnPoint: {fileID: 0}
   spawnDelay: 0.75
-  EnemyList: []
+  totalWaves: 10
+  totalEnemies: 5

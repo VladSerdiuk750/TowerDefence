@@ -10,17 +10,17 @@ public class Enemy : MonoBehaviour
     
     [SerializeField] private int rewardAmount;
 
-    private Transform _target; //target way point
+    public int RewardAmount => rewardAmount;
+
+    private Vector3 _target; //target way point
 
     private int _wayPointsIndex = 0; //current way point index
     
-    private Collider2D _enemyCollider;
-
-    private Animator _animator;
-
-    private bool _isDead = false;
-
+    private bool _isDead;
     public bool IsDead => _isDead; // is Enemy dead
+    
+    private Collider2D _enemyCollider;
+    private Animator _animator;
     
     private void Awake()
     {
@@ -28,8 +28,10 @@ public class Enemy : MonoBehaviour
         _animator = GetComponent<Animator>();
         if (MovingPoints.Points.Length != 0)
         {
-            _target = MovingPoints.Points[0];
+            _target = MovingPoints.Points[0].position;
         }
+
+        _isDead = false;
     }
 
     private void FixedUpdate()
@@ -40,7 +42,7 @@ public class Enemy : MonoBehaviour
 
     private void MoveEnemy()
     {
-        var direction = _target.position - transform.position;
+        var direction = _target - transform.position;
         transform.Translate(direction.normalized * (speed * Time.deltaTime), Space.World);
     }
 
@@ -50,15 +52,11 @@ public class Enemy : MonoBehaviour
         {
             _wayPointsIndex += 1;
             _target = _wayPointsIndex < MovingPoints.Points.Length ? 
-                MovingPoints.Points[_wayPointsIndex] : exitPoint;
+                MovingPoints.Points[_wayPointsIndex].position : exitPoint.position;
         }
         else if (collision.CompareTag("Finish"))
         {
-            GameManager.Instance.RoundEscaped += 1;
-            GameManager.Instance.TotalEscaped += 1;
-            GameManager.Instance.UnRegisterEnemy(this);
-            GameManager.Instance.IsWaveOver();
-            GameManager.Instance.IsGameOver();
+            GameManager.Instance.OnEnemyEscape(this);
         }
         else if (collision.CompareTag("ProjectTile"))
         {
@@ -87,7 +85,7 @@ public class Enemy : MonoBehaviour
         
         _enemyCollider.enabled = false;
 
-        GameManager.Instance.onEnemyDie.Invoke(rewardAmount, this);
+        GameManager.Instance.OnEnemyDie(this);
     }
 
     private void HideDeadEnemy(float time)

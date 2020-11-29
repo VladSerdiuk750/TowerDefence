@@ -122,7 +122,7 @@ public class Tower : MonoBehaviour
     {
         List<Enemy> enemiesInRange = new List<Enemy>(); // подтягивает из другого листа
 
-        foreach (Enemy enemy in GameManager.Instance.enemyList) // ищет в листе противников
+        foreach (Enemy enemy in GameManager.Instance.EnemyList) // ищет в листе противников
         {
             // если расстояние от башни до противника меньше или равно радиусу стрельбы
             if (Vector2.Distance(transform.localPosition, enemy.transform.localPosition) <= attackRadius)

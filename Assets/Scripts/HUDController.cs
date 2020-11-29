@@ -14,6 +14,7 @@ public class HUDController : MonoBehaviour
     [SerializeField] private Button sellBtn;
     // [SerializeField] private Sprite[] upgradeSprites;
     // [SerializeField] private float padding;
+    
     private Text _playBtnLabel;
 
     private void Awake()
@@ -23,7 +24,7 @@ public class HUDController : MonoBehaviour
 
     private void Update() 
     {
-        if (Manager.Instance.currentState != GameState.Menu)
+        if (Manager.Instance.CurrentState != GameState.Menu)
         {
             UpdateLabels();
         }
@@ -42,7 +43,7 @@ public class HUDController : MonoBehaviour
     {
         totalMoneyLabel.text = MoneyManager.Instance.TotalMoney.ToString();
         totalEscapeLabel.text = "Escaped " + GameManager.Instance.TotalEscaped + " of 10";
-        currentWave.text = "Wave " + GameManager.Instance.WaveNumber;
+        currentWave.text = "Wave " + GameManager.Instance.CurrentWaveNumber;
     }
 
     public void PlayButtonSetActive(bool isActive)
